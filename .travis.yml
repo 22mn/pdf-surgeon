@@ -4,10 +4,10 @@ python:
   - "3.4"
   - "3.5"
   - "3.6"
-env:
-  - DISPLAY=:99.0
+
 before_install:
-  sh -e /etc/init.d/xvfb start
+  - "export DISPLAY=:99.0"
+  - "sh -e /etc/init.d/xvfb start"
 install:
   - pip install PyPDF2
 
