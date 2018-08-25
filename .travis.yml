@@ -1,10 +1,13 @@
 language: python
 
+
 python:
   - "3.4"
   - "3.5"
   - "3.6"
-install:
-  pip install PyPDF2
+
+before_install:
+  pip install --user PyPDF2
+
 script:
   ./source-codes/pdfgui-v1.py
