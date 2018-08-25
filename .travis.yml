@@ -7,4 +7,4 @@ python:
 install:
   pip install PyPDF2
 script:
-  source-codes/pdfgui-v1.py
+  ./source-codes/pdfgui-v1.py
