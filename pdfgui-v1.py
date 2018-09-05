@@ -55,6 +55,9 @@ class PdfGui():
 		#bind confirm button
 		self.bindokbtn = ttk.Button(self.labelframeone,text="Bind PDFs",command=self.bind,style="i12b.TButton");
 		
+		#progress bar
+		self.progress_bar = ttk.Progressbar(self.mainframe,orient=HORIZONTAL,length=700,mode="determinate")
+
 		#events [double-click open]
 		self.uploadfileslist.bind("<Double-Button-1>",self.doubleClickOpen);
 
@@ -89,6 +92,7 @@ class PdfGui():
 
 		#grids
 		self.mainframe.grid(row=0,column=0)
+		self.progress_bar.grid(row=2,column=0,columnspan=3)
 
 		#labelframeone -grids
 		self.labelframeone.grid(row=0,column=0,padx=10,pady=10,sticky=(N))
