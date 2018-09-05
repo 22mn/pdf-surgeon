@@ -1,4 +1,5 @@
 import tkinter as tk,subprocess,os
+from time import sleep
 from pdfoperator import PdfSetOperator,PdfGetOperator
 from tkinter import *
 from tkinter import ttk,messagebox,font
@@ -18,6 +19,7 @@ class PdfGui():
 		self.combine.set(False);
 		self.getOperator=None;
 		self.NameDirectoryDict = {};
+		self.files=0;
 
 		self.master = master
 		master.configure(background="light grey")
@@ -55,8 +57,6 @@ class PdfGui():
 		#bind confirm button
 		self.bindokbtn = ttk.Button(self.labelframeone,text="Bind PDFs",command=self.bind,style="i12b.TButton");
 		
-		#progress bar
-		self.progress_bar = ttk.Progressbar(self.mainframe,orient=HORIZONTAL,length=700,mode="determinate")
 
 		#events [double-click open]
 		self.uploadfileslist.bind("<Double-Button-1>",self.doubleClickOpen);
@@ -92,7 +92,6 @@ class PdfGui():
 
 		#grids
 		self.mainframe.grid(row=0,column=0)
-		self.progress_bar.grid(row=2,column=0,columnspan=3)
 
 		#labelframeone -grids
 		self.labelframeone.grid(row=0,column=0,padx=10,pady=10,sticky=(N))
@@ -147,9 +146,13 @@ class PdfGui():
 	def bind(self):
 		if not self.uploadfileslist or len(self.uploadfileslist.get(0,END))<2:
 			return ;
+
 		newList = self.uploadfileslist.get(0,len(self.bindUploadFiles))
 		reorderList = [];
 		[reorderList.append(self.NameDirectoryDict[i]) for i in newList];
+		# progress bar
+		self.files = range(len(self.bindUploadFiles));
+		self.progress();
 		pdf = PdfSetOperator();
 		pdf.bind(*tuple(reorderList),outputDir=self.outputDir);
 		messagebox.showinfo("PDF Operation Completed","Your output-binder file is ready!")
@@ -159,6 +162,7 @@ class PdfGui():
 			title="Select PDF File", filetypes=(("PDF File","*.pdf"),))
 		if not self.extractUploadFile:
 			return '';
+
 		self.outputDir= "/".join(self.extractUploadFile.split("/")[:-1]);
 		self.getOperator = PdfGetOperator(self.extractUploadFile);
 		numpages= self.getOperator.numberOfPage()
@@ -172,6 +176,9 @@ class PdfGui():
 		if not self.pageNumList.get():
 			messagebox.showerror("Page Number Error!","Please type in your page number 'eg: 1,3-5,9,11-17'.")
 			return;
+		# progress bar show	
+		self.files = range(len(self.pageNumList.get().split(",")));
+		self.progress();
 		self.getOperator = PdfGetOperator(self.extractUploadFile);
 		self.getOperator.extract(self.check(self.pageNumList.get()),self.outputDir,self.combine.get());
 		isMultiple = "file is" if len(self.pageNumList.get().split(","))<2 else "files are"
@@ -225,6 +232,28 @@ class PdfGui():
 
 	def down(self):
 		self.move(+1);
+
+
+	def progress(self):
+		popup = tk.Toplevel()
+		lab= tk.Label(popup,text="Processing files...")
+		lab.grid(row=0,column=0)
+
+		progress = 0
+		progress_var = tk.DoubleVar()
+		progress_bar = ttk.Progressbar(popup, variable=progress_var,length=300)
+		progress_bar.grid(row=1,column=0)
+		popup.pack_slaves()
+
+		progress_step = float(100.0/len(self.files))
+		for file in self.files:
+			popup.update()
+			sleep(0.1)
+			progress += progress_step
+			progress_var.set(progress)
+		return 0
+
+
 class ToolTip():
 	def __init__(self, widget):
 		self.widget    = widget

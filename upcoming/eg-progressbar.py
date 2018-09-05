@@ -1,38 +1,31 @@
+import tkinter as tk
+from tkinter import ttk
+from time import sleep
 
-#It's better to use threading and run your code in another thread.
+teams = range(5)
 
-#Like this:
+def button_command():
+    #start progress bar
+    popup = tk.Toplevel()
+    tk.Label(popup, text="Files being downloaded").grid(row=0,column=0)
 
-from tkinter import Button, Tk, HORIZONTAL
+    progress = 0
+    progress_var = tk.DoubleVar()
+    progress_bar = ttk.Progressbar(popup, variable=progress_var, maximum=100)
+    progress_bar.grid(row=1, column=0)#.pack(fill=tk.X, expand=1, side=tk.BOTTOM)
+    popup.pack_slaves()
 
-from tkinter.ttk import Progressbar
-import time
-import threading
+    progress_step = float(100.0/len(teams))
+    for team in teams:
+        popup.update()
+        sleep(1) # lauch task
+        progress += progress_step
+        progress_var.set(progress)
 
-class MonApp(Tk):
-    def __init__(self):
-        super().__init__()
+    return 0
 
+root = tk.Tk()
 
-        self.btn = Button(self, text='Traitement', command=self.traitement)
-        self.btn.grid(row=0,column=0)
-        self.progress = Progressbar(self, orient=HORIZONTAL,length=100,  mode='determinate')
+tk.Button(root, text="Launch", command=button_command).pack()
 
-
-    def traitement(self):
-        def real_traitement():
-            self.progress.grid(row=1,column=0)
-            self.progress.start()
-            time.sleep(5)
-            self.progress.stop()
-            self.progress.grid_forget()
-
-            self.btn['state']='normal'
-
-        self.btn['state']='disabled'
-        threading.Thread(target=real_traitement).start()
-
-if __name__ == '__main__':
-
-    app = MonApp()
-    app.mainloop()
+root.mainloop()
