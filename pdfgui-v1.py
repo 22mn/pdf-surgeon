@@ -1,4 +1,4 @@
-import tkinter as tk,subprocess,os
+import tkinter as tk,subprocess,os,threading
 from time import sleep
 from pdfoperator import PdfSetOperator,PdfGetOperator
 from tkinter import *
@@ -150,11 +150,20 @@ class PdfGui():
 		newList = self.uploadfileslist.get(0,len(self.bindUploadFiles))
 		reorderList = [];
 		[reorderList.append(self.NameDirectoryDict[i]) for i in newList];
-		# progress bar
+		
+		# progress bar thread
+		self.files = 0
 		self.files = range(len(self.bindUploadFiles));
-		self.progress();
+		prg_thread = threading.Thread(name="progressbar",target=self.progress());
+		
+		# pdf-binding thread
 		pdf = PdfSetOperator();
-		pdf.bind(*tuple(reorderList),outputDir=self.outputDir);
+		pdf_thread = threading.Thread(name="pdf-binding",target=pdf.bind(*tuple(reorderList),outputDir=self.outputDir));
+		
+		# start threads
+		prg_thread.start()
+		pdf_thread.start()
+
 		messagebox.showinfo("PDF Operation Completed","Your output-binder file is ready!")
 
 	def extractUpload(self):
@@ -176,13 +185,21 @@ class PdfGui():
 		if not self.pageNumList.get():
 			messagebox.showerror("Page Number Error!","Please type in your page number 'eg: 1,3-5,9,11-17'.")
 			return;
-		# progress bar show	
+		# progress bar thread
+		self.files = 0
 		self.files = range(len(self.pageNumList.get().split(",")));
-		self.progress();
+		prg_thread = threading.Thread(name="progressbar",target=self.progress());
+		
+		# pdf-extract thread
 		self.getOperator = PdfGetOperator(self.extractUploadFile);
-		self.getOperator.extract(self.check(self.pageNumList.get()),self.outputDir,self.combine.get());
+		pdf_thread = threading.Thread(name="pdf-extracting",target=self.getOperator.extract(self.check(self.pageNumList.get()),self.outputDir,self.combine.get()));
 		isMultiple = "file is" if len(self.pageNumList.get().split(","))<2 else "files are"
 		message = "combined file is" if self.combine.get() else isMultiple;
+		
+		# threads start
+		prg_thread.start()
+		pdf_thread.start()
+
 		messagebox.showinfo("PDF Operation Completed","Your %s ready!" %message);
 	
 	def check(self,strList):
@@ -248,10 +265,10 @@ class PdfGui():
 		progress_step = float(100.0/len(self.files))
 		for file in self.files:
 			popup.update()
-			sleep(0.1)
+			sleep(0.01)
 			progress += progress_step
 			progress_var.set(progress)
-		return 0
+		return popup.destroy()
 
 
 class ToolTip():

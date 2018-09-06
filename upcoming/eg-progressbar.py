@@ -7,11 +7,11 @@ teams = range(5)
 def button_command():
     #start progress bar
     popup = tk.Toplevel()
-    tk.Label(popup, text="Files being downloaded").grid(row=0,column=0)
+    tk.Label(popup, text="processing files").grid(row=0,column=0)
 
     progress = 0
     progress_var = tk.DoubleVar()
-    progress_bar = ttk.Progressbar(popup, variable=progress_var, maximum=100)
+    progress_bar = ttk.Progressbar(popup, variable=progress_var, maximum=100,length=200)
     progress_bar.grid(row=1, column=0)#.pack(fill=tk.X, expand=1, side=tk.BOTTOM)
     popup.pack_slaves()
 
@@ -22,7 +22,7 @@ def button_command():
         progress += progress_step
         progress_var.set(progress)
 
-    return 0
+    return popup.destroy()
 
 root = tk.Tk()
 
