@@ -48,9 +48,16 @@ class PdfSetOperator():
 	def bind(self, *files,outputDir="./"):
 		merger = PdfFileMerger();
 		for num,file in enumerate(files):
-			# bind files
-			merger.append(file,import_bookmarks=False);
+			if "blank-page" in str(file):
+				fileWriter = PdfFileWriter();
+				blankPage = fileWriter.addBlankPage(height=600, width=900)
+				merger.append(blankPage)
+			else:
+				# bind files
+				merger.append(file,import_bookmarks=False);
+
 			merger.addBookmark("page-%s"%num,num,parent=None);
+		
 		output = open("%s/output-binder.pdf" %outputDir,"wb");
 		merger.write(output);
 		merger.close();

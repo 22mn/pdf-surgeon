@@ -20,6 +20,7 @@ class PdfGui():
 		self.getOperator=None;
 		self.NameDirectoryDict = {};
 		self.files=0;
+		self.blankPageCount = 0;
 
 		self.master = master
 		master.configure(background="light grey")
@@ -86,6 +87,7 @@ class PdfGui():
 		tooltip(self.downbtn,"Down");
 		tooltip(self.viewbtn,"Open");
 		tooltip(self.removebtn,"Remove");
+		tooltip(self.blankbtn,"add blank page")
 		tooltip(self.bindokbtn,"Files merge to single PDF")
 		tooltip(self.l2uploadbtn,"Upload PDF to extract");
 		tooltip(self.l2extractok,"Extract files from uploaded PDF")
@@ -255,17 +257,18 @@ class PdfGui():
 	def down(self):
 		self.move(+1);
 
-
 	def addBlank(self):
-		pass
+		self.blankPageCount += 1;
+		name = "blank-page %s" %self.blankPageCount
+		self.uploadfileslist.insert("active",name)
+		self.NameDirectoryDict[name] = name;
 
 	def progress(self,sleep_time):
 		popup = tk.Toplevel()
 		lab= tk.Label(popup,text="Processing files...")
 		x, y, _cx, cy = self.mainframe.bbox('insert')
 		x = x + self.mainframe.winfo_rootx()+200
-		y = y + cy + self.mainframe.winfo_rooty()-300
-		
+		y = y + cy + self.mainframe.winfo_rooty()-300		
 		popup.wm_geometry("+%d+%d" %(x,y))
 		lab.grid(row=0,column=0)
 
