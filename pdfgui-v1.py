@@ -47,13 +47,14 @@ class PdfGui():
 		self.downbtn =ttk.Button(self.updownframe,text="↓", command=self.down, style="r9n.TButton")
 		self.viewbtn = ttk.Button(self.viewremoveframe,text="⬜",command=self.view, style="r9n.TButton")
 		self.removebtn = ttk.Button(self.viewremoveframe,text="X",command=self.remove, style="r9nc.TButton")
-
+		self.blankbtn = ttk.Button(self.viewremoveframe,text="➕",command=self.addBlank,style="r9n.TButton")
 
 		#files info list
 		self.lbframe = ttk.Frame(self.labelframeone,relief=SUNKEN)
 		self.uploadfileslist = tk.Listbox(self.lbframe,exportselection=False,height=6,width=35)		
 		self.scrollbar= ttk.Scrollbar(self.lbframe,orient=VERTICAL,command=self.uploadfileslist.yview) 
 		self.uploadfileslist["yscrollcommand"]=self.scrollbar.set;
+		
 		#bind confirm button
 		self.bindokbtn = ttk.Button(self.labelframeone,text="Bind PDFs",command=self.bind,style="i12b.TButton");
 		
@@ -102,7 +103,9 @@ class PdfGui():
 		self.upbtn.grid(row=0,column=0,sticky=(N,E))
 		self.downbtn.grid(row=0,column=1,sticky=(N,W,E))
 		self.viewbtn.grid(row=0,column=2,sticky=(N,W,E))	
-		self.removebtn.grid(row=0,column=3,sticky=(N,E))
+		self.removebtn.grid(row=0,column=3,sticky=(N,W,E))
+		self.blankbtn.grid(row=0,column=4,sticky=(N,E))
+
 		self.lbframe.grid(row=1,column=0,padx=10)
 		self.uploadfileslist.grid(row=0,column=0,sticky=(N,W,E,S))
 		self.scrollbar.grid(row=0,column=1,sticky=(N,S))
@@ -124,6 +127,7 @@ class PdfGui():
 		self.style = ttk.Style();
 		self.style.configure("r9n.TButton",font=("Candara",9,"normal","bold"),height=4,width=3)
 		self.style.configure("r9nc.TButton",font=("Candara",9,"normal","bold"),height=4,width=3,foreground="red")
+		
 		self.style.configure("i12b.TButton",font = ("Candara",12,"italic","bold"))
 		self.style.configure("i12n.TButton",font = ("Candara",12,"italic","normal"),relief=RAISED)
 		self.style.configure("i10n.TEntry",font = ("Candara",10,"italic","normal"))
@@ -154,7 +158,7 @@ class PdfGui():
 		# progress bar thread
 		self.files = 0
 		self.files = range(len(self.bindUploadFiles));
-		prg_thread = threading.Thread(name="progressbar",target=self.progress());
+		prg_thread = threading.Thread(name="progressbar",target=self.progress(0.15));
 		
 		# pdf-binding thread
 		pdf = PdfSetOperator();
@@ -187,13 +191,14 @@ class PdfGui():
 			return;
 		# progress bar thread
 		self.files = 0
-		self.files = range(len(self.pageNumList.get().split(",")));
-		prg_thread = threading.Thread(name="progressbar",target=self.progress());
+
+		self.files = range(len(self.check(self.pageNumList.get())));
+		prg_thread = threading.Thread(name="progressbar",target=self.progress(0.05));
 		
 		# pdf-extract thread
 		self.getOperator = PdfGetOperator(self.extractUploadFile);
 		pdf_thread = threading.Thread(name="pdf-extracting",target=self.getOperator.extract(self.check(self.pageNumList.get()),self.outputDir,self.combine.get()));
-		isMultiple = "file is" if len(self.pageNumList.get().split(","))<2 else "files are"
+		isMultiple = "file is" if len(self.check(self.pageNumList.get()))<2 else "files are"
 		message = "combined file is" if self.combine.get() else isMultiple;
 		
 		# threads start
@@ -251,7 +256,10 @@ class PdfGui():
 		self.move(+1);
 
 
-	def progress(self):
+	def addBlank(self):
+		pass
+
+	def progress(self,sleep_time):
 		popup = tk.Toplevel()
 		lab= tk.Label(popup,text="Processing files...")
 		x, y, _cx, cy = self.mainframe.bbox('insert')
@@ -270,7 +278,7 @@ class PdfGui():
 		progress_step = float(100.0/len(self.files))
 		for file in self.files:
 			popup.update()
-			sleep(0.01)
+			sleep(sleep_time)
 			progress += progress_step
 			progress_var.set(progress)
 		return popup.destroy()
