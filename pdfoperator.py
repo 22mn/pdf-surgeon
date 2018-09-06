@@ -1,4 +1,5 @@
-from PyPDF2 import PdfFileWriter, PdfFileReader, PdfFileMerger
+from PyPDF2 import PdfFileWriter, PdfFileReader, PdfFileMerger,pdf
+import os
 
 class PdfGetOperator():
 
@@ -46,27 +47,19 @@ class PdfSetOperator():
 	def __init__(self):
 		pass
 	def bind(self, *files,outputDir="./"):
+		clean = [];
 		merger = PdfFileMerger();
+		output = open("%s/output-binder.pdf" %outputDir,"wb");
 		for num,file in enumerate(files):
 			if "blank-page" in str(file):
-				fileWriter = PdfFileWriter();
-				blankPage = fileWriter.addBlankPage(height=600, width=900)
-				merger.append(blankPage)
-			else:
-				# bind files
-				merger.append(file,import_bookmarks=False);
-
-			merger.addBookmark("page-%s"%num,num,parent=None);
-		
-		output = open("%s/output-binder.pdf" %outputDir,"wb");
+				clean.append(file);
+			merger.append(file,import_bookmarks=False);	
+			merger.addBookmark("page-%s"%num,num,parent=None);					
 		merger.write(output);
 		merger.close();
 		output.close();
+		[os.remove(i) for i in clean];
 
 if __name__ == "__main__":
-	pdf = PdfSetOperator()
-	file1 = r"page-1.pdf";
-	file2 = r"page-3.pdf";
-	file3 = r"page-4.pdf";
-	file4 = r"page-5.pdf";
-	pdf.bind(file1,file2,file3,file4)
+	pso = PdfSetOperator()
+	print(pso)

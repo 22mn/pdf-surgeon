@@ -1,4 +1,5 @@
 import tkinter as tk,subprocess,os,threading
+from PyPDF2 import PdfFileWriter
 from time import sleep
 from pdfoperator import PdfSetOperator,PdfGetOperator
 from tkinter import *
@@ -259,7 +260,15 @@ class PdfGui():
 
 	def addBlank(self):
 		self.blankPageCount += 1;
-		name = "blank-page %s" %self.blankPageCount
+		name = "blank-page %s.pdf" %self.blankPageCount
+		
+		file_writer = PdfFileWriter()
+		file_writer.addBlankPage(height=680,width=480)
+		file = open(name,"wb")
+		file_writer.write(file)
+		file.close()
+
+
 		self.uploadfileslist.insert("active",name)
 		self.NameDirectoryDict[name] = name;
 
