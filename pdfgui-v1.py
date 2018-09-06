@@ -161,8 +161,8 @@ class PdfGui():
 		pdf_thread = threading.Thread(name="pdf-binding",target=pdf.bind(*tuple(reorderList),outputDir=self.outputDir));
 		
 		# start threads
-		prg_thread.start()
 		pdf_thread.start()
+		prg_thread.start()
 
 		messagebox.showinfo("PDF Operation Completed","Your output-binder file is ready!")
 
@@ -197,8 +197,8 @@ class PdfGui():
 		message = "combined file is" if self.combine.get() else isMultiple;
 		
 		# threads start
-		prg_thread.start()
 		pdf_thread.start()
+		prg_thread.start()
 
 		messagebox.showinfo("PDF Operation Completed","Your %s ready!" %message);
 	
@@ -254,6 +254,11 @@ class PdfGui():
 	def progress(self):
 		popup = tk.Toplevel()
 		lab= tk.Label(popup,text="Processing files...")
+		x, y, _cx, cy = self.mainframe.bbox('insert')
+		x = x + self.mainframe.winfo_rootx()+200
+		y = y + cy + self.mainframe.winfo_rooty()-300
+		
+		popup.wm_geometry("+%d+%d" %(x,y))
 		lab.grid(row=0,column=0)
 
 		progress = 0
