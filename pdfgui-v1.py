@@ -22,25 +22,39 @@ class PdfGui():
 		self.NameDirectoryDict = {};
 		self.files=0;
 		self.blankPageCount = 0;
+		self.background = "gray88"
 
 		self.master = master
-		master.configure(background="light grey")
+		master.configure(background=self.background)
 		master.title("PDF-Surgeon® [beta 0.0.1v]")
 		master.resizable(width=False, height=False);
 		default_font = font.nametofont("TkDefaultFont")
 		default_font.configure(size=12,family="Candara")
 		
 		#mainframe
-		self.mainframe = ttk.Frame(master,relief=tk.RIDGE,width=500,height=500);
-		#labelframe - one
-		self.labelframeone = ttk.LabelFrame(self.mainframe,text="Bind Files")
+		self.mainframe = ttk.Frame(master,relief=tk.RIDGE,width=500,height=500,style="main.TFrame");
 		
+		# label for frame-one
+		self.labelone = ttk.Label(text="Bind Files")
+
+		# label for frame-two
+		self.labeltwo = ttk.Label(text="Extract Pages")
+
+		#labelframe - one
+		self.labelframeone = ttk.LabelFrame(self.mainframe,labelwidget=self.labelone)
+		
+		#copy right
+		self.copyright = ttk.Label(self.mainframe,text="copyrightⓒ2018 min.naung",style="i8nc.TLabel")
+		self.copyright.grid(row=1,column=2,pady=3)
+
+
 		#labelframe for [uploadfiles,up,down,view,remove ]
 		self.newframe = ttk.Frame(self.labelframeone);
 		#labelframe for [up,down]
 		self.updownframe = ttk.Frame(self.newframe);
 		#labelframe for [view,remove]
 		self.viewremoveframe = ttk.Frame(self.newframe);
+
 
 		#upload files button
 		self.uploadfilesbtn = ttk.Button(self.newframe,text="Upload Files",command=self.bindUpload,style="i12n.TButton")
@@ -57,15 +71,16 @@ class PdfGui():
 		self.scrollbar= ttk.Scrollbar(self.lbframe,orient=VERTICAL,command=self.uploadfileslist.yview) 
 		self.uploadfileslist["yscrollcommand"]=self.scrollbar.set;
 		
+
 		#bind confirm button
-		self.bindokbtn = ttk.Button(self.labelframeone,text="Bind PDFs",command=self.bind,style="i12b.TButton");
+		self.bindokbtn = ttk.Button(self.labelframeone,text="Bind PDFs",command=self.bind);
 		
 
 		#events [double-click open]
 		self.uploadfileslist.bind("<Double-Button-1>",self.doubleClickOpen);
 
 		#labelframe - two
-		self.labelframetwo = ttk.LabelFrame(self.mainframe,text="Extract Pages")
+		self.labelframetwo = ttk.LabelFrame(self.mainframe,labelwidget=self.labeltwo)
 		#upload file button
 		self.uploadframe = ttk.Frame(self.labelframetwo)	
 		self.l2uploadbtn = ttk.Button(self.uploadframe,text="Upload File",command=self.extractUpload,style="i12n.TButton")
@@ -128,9 +143,12 @@ class PdfGui():
 
 		# styles
 		self.style = ttk.Style();
+		self.style.configure("main.TFrame",background=self.background)
+		self.style.configure("label.TLabel",background="AntiqueWhite1")
+		self.style.configure("lframe.TLabelframe.Label",background="AntiqueWhite1")
 		self.style.configure("r9n.TButton",font=("Candara",9,"normal","bold"),height=4,width=3)
 		self.style.configure("r9nc.TButton",font=("Candara",9,"normal","bold"),height=4,width=3,foreground="red")
-		
+		self.style.configure("i8nc.TLabel",font=("Candara",9,"italic","bold"),foreground="grey33",background=self.background)
 		self.style.configure("i12b.TButton",font = ("Candara",12,"italic","bold"))
 		self.style.configure("i12n.TButton",font = ("Candara",12,"italic","normal"),relief=RAISED)
 		self.style.configure("i10n.TEntry",font = ("Candara",10,"italic","normal"))
@@ -152,13 +170,10 @@ class PdfGui():
 
 	def bind(self):
 
-		# ISSUED (KI1) - not returning only blank pages
-		# ISSUED (KI2) - not including pages after second or third blank page 
-
-		if not self.uploadfileslist or len(self.uploadfileslist.get(0,END))<2:
+		if len(self.NameDirectoryDict.items())<2:
 			return ;
 
-		newList = self.uploadfileslist.get(0,len(self.bindUploadFiles))
+		newList = self.uploadfileslist.get(0,len(self.NameDirectoryDict.items()))
 		reorderList = [];
 		[reorderList.append(self.NameDirectoryDict[i]) for i in newList];
 		
