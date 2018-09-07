@@ -1,5 +1,5 @@
 import tkinter as tk,subprocess,os,threading
-from PyPDF2 import PdfFileWriter
+from PyPDF2 import PdfFileWriter,PdfFileReader
 from time import sleep
 from pdfoperator import PdfSetOperator,PdfGetOperator
 from tkinter import *
@@ -10,7 +10,7 @@ class PdfGui():
 	def __init__(self,master):
 
 		#variables
-		self.outputDir = "";
+		self.outputDir = os.path.expanduser("~/Desktop");
 		self.bindUploadFiles = '';
 		self.extractUploadFile='';
 		self.extractUploadFileName = StringVar();
@@ -151,6 +151,10 @@ class PdfGui():
 			self.NameDirectoryDict[i.split("/")[-1]] = i;
 
 	def bind(self):
+
+		# ISSUED (KI1) - not returning only blank pages
+		# ISSUED (KI2) - not including pages after second or third blank page 
+
 		if not self.uploadfileslist or len(self.uploadfileslist.get(0,END))<2:
 			return ;
 
@@ -259,15 +263,26 @@ class PdfGui():
 		self.move(+1);
 
 	def addBlank(self):
+
+		# if not uploaded any files, return default page size
+		# get last page from upload
+		if len(self.bindUploadFiles) > 0:
+			last_page = self.bindUploadFiles[-1]
+			readLastPage = PdfFileReader(open(last_page,"rb"))
+			page_size = readLastPage.getPage(0).mediaBox;
+			width = page_size.upperRight[0]
+			height = page_size.upperRight[1]
+		else:
+			width = 580
+			height = 750
 		self.blankPageCount += 1;
 		name = "blank-page %s.pdf" %self.blankPageCount
 		
 		file_writer = PdfFileWriter()
-		file_writer.addBlankPage(height=680,width=480)
+		file_writer.addBlankPage(height=height,width=width)
 		file = open(name,"wb")
 		file_writer.write(file)
 		file.close()
-
 
 		self.uploadfileslist.insert("active",name)
 		self.NameDirectoryDict[name] = name;
@@ -287,7 +302,10 @@ class PdfGui():
 		progress_bar.grid(row=1,column=0)
 		popup.pack_slaves()
 
-		progress_step = float(100.0/len(self.files))
+		try:
+			progress_step = float(100.0/len(self.files))
+		except ZeroDivisionError:
+			progress_step = 10.0
 		for file in self.files:
 			popup.update()
 			sleep(sleep_time)
