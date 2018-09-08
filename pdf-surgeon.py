@@ -26,7 +26,7 @@ class PdfGui():
 
 		self.master = master
 		master.configure(background=self.background)
-		master.title("PDF-Surgeon® [beta 0.0.1v]")
+		master.title("PDF-Surgeon® [1.0.0v]")
 		master.resizable(width=False, height=False);
 		default_font = font.nametofont("TkDefaultFont")
 		default_font.configure(size=12,family="Candara")
@@ -148,7 +148,7 @@ class PdfGui():
 		self.style.configure("lframe.TLabelframe.Label",background="AntiqueWhite1")
 		self.style.configure("r9n.TButton",font=("Candara",9,"normal","bold"),height=4,width=3)
 		self.style.configure("r9nc.TButton",font=("Candara",9,"normal","bold"),height=4,width=3,foreground="red")
-		self.style.configure("i8nc.TLabel",font=("Candara",9,"italic","bold"),foreground="grey55",background=self.background)
+		self.style.configure("i8nc.TLabel",font=("Candara",9,"italic","bold"),foreground="gray33",background=self.background)
 		self.style.configure("i12b.TButton",font = ("Candara",12,"italic","bold"))
 		self.style.configure("i12n.TButton",font = ("Candara",12,"italic","normal"),relief=RAISED)
 		self.style.configure("i10n.TEntry",font = ("Candara",10,"italic","normal"))

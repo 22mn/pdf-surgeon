@@ -13,7 +13,7 @@ base = None
 if sys.platform == "win32":
 	base = "Win32GUI"
 
-executables = [Executable("pdfgui-v1.py",base=base)]
+executables = [Executable("pdf-surgeon.py",base=base)]
 
 setup(name="PDF-Surgeon",author="min.naung",options={"build_exe":{"packages":["tkinter"],"include_files":include_files}},
-	  version="0.0.1",description="PDF Tools developed by min.naung", executables=executables)
+	  version="1.0.0",description="PDF page-editor tool.", executables=executables)
