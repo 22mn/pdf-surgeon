@@ -159,7 +159,11 @@ class PdfGui():
 
 
 	def bindUpload(self):
-		self.bindUploadFiles = askopenfilenames(initialdir = "./",title="Select PDF Files",
+		if self.outputDir:
+			initialDir = self.outputDir;
+		else:
+			initialDir = "./"
+		self.bindUploadFiles = askopenfilenames(initialdir = initialDir,title="Select PDF Files",
 			filetypes=(("PDF File/Files","*.pdf"),))
 		if not self.bindUploadFiles:
 			return '';
@@ -193,7 +197,11 @@ class PdfGui():
 		messagebox.showinfo("PDF Operation Completed","Your output-binder file is ready!")
 
 	def extractUpload(self):
-		self.extractUploadFile = askopenfilename(initialdir = "./",
+		if self.outputDir:
+			initialDir = self.outputDir;
+		else:
+			initialDir = "./"
+		self.extractUploadFile = askopenfilename(initialdir = initialDir,
 			title="Select PDF File", filetypes=(("PDF File","*.pdf"),))
 		if not self.extractUploadFile:
 			return '';
