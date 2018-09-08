@@ -22,7 +22,7 @@ class PdfGui():
 		self.NameDirectoryDict = {};
 		self.files=0;
 		self.blankPageCount = 0;
-		self.background = "gray88"
+		self.background = "gray90"
 
 		self.master = master
 		master.configure(background=self.background)
@@ -73,7 +73,7 @@ class PdfGui():
 		
 
 		#bind confirm button
-		self.bindokbtn = ttk.Button(self.labelframeone,text="Bind PDFs",command=self.bind);
+		self.bindokbtn = ttk.Button(self.labelframeone,text="Bind PDFs",command=self.bind,style="i12b.TButton");
 		
 
 		#events [double-click open]
@@ -139,7 +139,7 @@ class PdfGui():
 		self.pagenumlb.grid(row=0,column=0)
 		self.pagenumbers.grid(row=1,column=0)
 		self.combinepage.grid(row=4,column=0,pady=3)
-		self.l2extractok.grid(row=5,column=0,ipadx=10,pady=10);
+		self.l2extractok.grid(row=5,column=0,ipadx=10,pady=8);
 
 		# styles
 		self.style = ttk.Style();
@@ -148,7 +148,7 @@ class PdfGui():
 		self.style.configure("lframe.TLabelframe.Label",background="AntiqueWhite1")
 		self.style.configure("r9n.TButton",font=("Candara",9,"normal","bold"),height=4,width=3)
 		self.style.configure("r9nc.TButton",font=("Candara",9,"normal","bold"),height=4,width=3,foreground="red")
-		self.style.configure("i8nc.TLabel",font=("Candara",9,"italic","bold"),foreground="grey33",background=self.background)
+		self.style.configure("i8nc.TLabel",font=("Candara",9,"italic","bold"),foreground="grey55",background=self.background)
 		self.style.configure("i12b.TButton",font = ("Candara",12,"italic","bold"))
 		self.style.configure("i12n.TButton",font = ("Candara",12,"italic","normal"),relief=RAISED)
 		self.style.configure("i10n.TEntry",font = ("Candara",10,"italic","normal"))
